@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>To do list</title>
+</head>
+<body>
+    <h1><%= kindOFDay %> TO DO List</h1>
+
+    <ul>
+        <li>Book</li>
+        <li>Wifi</li>
+        <li>Netflix</li>
+    <% for(var i=0; i<listItems.length ; i++){ %>
+        <li><%= listItems[i] %></li>
+    <% } %>
+    </ul>
+
+    <form action="/" method="post">
+        <input type="text" name="list">
+        <button type="submit" name="button">Add</button>
+    </form>
+
+</body>
+</html>
+
+// server code
+
+const express = require ("express");
+const bodyparser = require ("body-parser");
+const app = express();
+var items = [];
+app.set('view engine', 'ejs');
+app.use(bodyparser.urlencoded({extended:true}));
+app.get("/", function(req,res){
+    var today = new Date();
+    var options = {
+        weekday : "long",
+        day : "numeric",
+        month : "long"
+    }
+    var day = today.toLocaleDateString("us-en", options);
+
+    res.render("list",{kindOFDay:day , listItems:items});
+});
+
+app.post("/", function(req,res){
+    var item = req.body.list;
+    items.push(item);
+    res.redirect("/");
+});
+
+app.listen(3000, function(){
+    console.log("server is running on port 3000");
+});
